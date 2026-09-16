@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Receipt - Reclaim Protocol</title>
+    <!-- Google Fonts: Playfair Display for serif headings, Inter for body text -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <!-- QR Code Library via CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <link rel="stylesheet" href="itsme.css">
+</head>
+<body>
+
+    <div class="page-wrapper">
+        <!-- Header -->
+        <header class="site-header">
+            <div class="logo-area">
+                <span class="logo-icon">🌿</span>
+                <div class="logo-text-group">
+                    <span class="logo-title">RECLAIM PROTOCOL</span>
+                    <span class="logo-subtitle">USAGE TODAY. A CLEANER TOMORROW.</span>
+                </div>
+            </div>
+            <nav class="header-nav">
+                <span class="nav-link inactive">How it works</span>
+                <span class="nav-link inactive">Why us</span>
+                <span class="nav-link inactive">Verify Receipt</span>
+                <button class="nav-btn-active">Create Receipt &rarr;</button>
+            </nav>
+        </header>
+
+        <!-- Main Title Section -->
+        <section class="hero-section">
+            <div class="hero-tag">- CREATE A RECEIPT</div>
+            <div class="hero-title-row">
+                <h1 class="hero-title">Your usage. A cleaner tomorrow.</h1>
+                <div class="hero-badge-side">
+                    <span class="side-tag">SAME DATA.</span>
+                    <span class="side-sub">A BRIGHTER TOMORROW.</span>
+                </div>
+            </div>
+            <p class="hero-subtitle">Enter your electricity usage details below to generate a verified carbon receipt.</p>
+        </section>
+
+        <!-- Main Content Layout (Left Form / Right Info & Preview) -->
+        <main class="main-layout">
+            
+            <!-- LEFT CARD: Form & Dynamic Results Container -->
+            <div class="card form-card">
+                
+                <!-- Step Indicator / Tracker -->
+                <div class="step-tracker" id="stepTracker">
+                    <div class="step-item active"><span class="step-num">1</span> Enter Usage</div>
+                    <div class="step-line"></div>
+                    <div class="step-item"><span class="step-num">2</span> Verify Source</div>
+                    <div class="step-line"></div>
+                    <div class="step-item"><span class="step-num">3</span> Calculate Impact</div>
+                    <div class="step-line"></div>
+                    <div class="step-item"><span class="step-num">4</span> Generate Receipt</div>
+                </div>
+
+                <!-- Form View -->
+                <div id="formContainer">
+                    <div class="form-header-text">
+                        <h2>Enter your electricity usage</h2>
+                        <p>Provide your electricity provider, billing period and consumption details.</p>
+                    </div>
+
+                    <form id="receiptForm" novalidate>
+                        <!-- Provider Dropdown -->
+                        <div class="input-group">
+                            <label for="provider">Electricity Provider</label>
+                            <select id="provider" required>
+                                <option value="" disabled selected>Select your electricity provider</option>
+                                <option value="Tata Power">Tata Power</option>
+                                <option value="Adani Electricity">Adani Electricity</option>
+                                <option value="BESCOM">BESCOM</option>
+                                <option value="BSES">BSES</option>
+                                <option value="TANGEDCO">TANGEDCO</option>
+                                <option value="Other">Other</option>
+                            </select>
+                            <div class="error-msg" id="providerError">Please select an electricity provider.</div>
+                        </div>
+
+                        <!-- Billing Period -->
+                        <div class="input-group">
+                            <label>Billing Period</label>
+                            <div class="date-row">
+                                <div class="date-field-wrapper">
+                                    <span class="calendar-icon">📅</span>
+                                    <input type="date" id="startDate" required>
+                                </div>
+                                <span class="date-dash">—</span>
+                                <div class="date-field-wrapper">
+                                    <span class="calendar-icon">📅</span>
+                                    <input type="date" id="endDate" required>
+                                </div>
+                            </div>
+                            <div class="error-msg" id="dateError">Please provide a valid billing period (End date cannot be before start date).</div>
+                        </div>
+
+                        <!-- Total Consumption -->
+                        <div class="input-group">
+                            <label for="consumption">Total Consumption</label>
+                            <div class="consumption-input-wrap">
+                                <input type="number" id="consumption" placeholder="Enter usage in kWh" step="any" min="0.01" required>
+                                <span class="unit-badge">kWh</span>
+                            </div>
+                            <div class="error-msg" id="consumptionError">Please enter valid electricity usage greater than zero.</div>
+                        </div>
+
+                        <!-- Optional Fields Section -->
+                        <div class="optional-section-title">Optional Details</div>
+                        <div class="form-row-grid">
+                            <div class="input-group">
+                                <label for="optName">Name</label>
+                                <input type="text" id="optName" placeholder="e.g. Jane Doe">
+                            </div>
+                            <div class="input-group">
+                                <label for="optEmail">Email</label>
+                                <input type="email" id="optEmail" placeholder="e.g. jane@example.com">
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label for="optCity">City</label>
+                            <input type="text" id="optCity" placeholder="e.g. Chennai">
+                        </div>
+
+                        <!-- Security notice box -->
+                        <div class="security-notice-box">
+                            <span class="sec-icon">🌿</span>
+                            <div>
+                                <strong>Your data is secure</strong>
+                                <p>We use trusted sources and secure verification (e.g. zkTLS) to ensure your data stays private and accurate.</p>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit" class="submit-btn">Continue &rarr;</button>
+                    </form>
+
+                    <!-- Trust Footer Icons inside form card -->
+                    <div class="card-trust-footer">
+                        <div class="trust-item">🔒 Private &amp; secure</div>
+                        <div class="trust-item">🌿 Transparent calculations</div>
+                        <div class="trust-item">🔗 Public receipt records</div>
+                    </div>
+                </div>
+
+                <!-- Loading State Container (Hidden by default) -->
+                <div id="loadingContainer" class="loading-container hidden">
+                    <div class="spinner"></div>
+                    <h3 class="loading-title" id="loadingText">Verifying your usage…</h3>
+                    <p class="loading-sub">Simulating secure protocol pipeline...</p>
+                </div>
+
+                <!-- Receipt Result Container (Hidden by default) -->
+                <div id="receiptResultContainer" class="receipt-result-container hidden">
+                    <div class="receipt-success-banner">
+                        <span class="success-icon">✅</span>
+                        <div>
+                            <strong>Carbon Receipt Generated Successfully</strong>
+                            <p>Demo verification complete. Your prototype receipt is ready below.</p>
+                        </div>
+                    </div>
+
+                    <!-- Digital Receipt Card Match -->
+                    <div class="digital-receipt-box" id="captureReceiptArea">
+                        <div class="receipt-top-brand">
+                            <div class="receipt-brand-left">
+                                <span class="receipt-leaf">🌿</span>
+                                <div>
+                                    <div class="receipt-brand-name">RECLAIM PROTOCOL</div>
+                                    <div class="receipt-brand-sub">CARBON RECEIPT</div>
+                                </div>
+                            </div>
+                            <div class="receipt-id-tag" id="resReceiptId">RCP-2026-000000</div>
+                        </div>
+
+                        <div class="receipt-meta-grid">
+                            <div class="meta-block">
+                                <span class="meta-label">ELECTRICITY PROVIDER</span>
+                                <span class="meta-val" id="resProvider">—</span>
+                            </div>
+                            <div class="meta-block">
+                                <span class="meta-label">BILLING PERIOD</span>
+                                <span class="meta-val" id="resBillingPeriod">—</span>
+                            </div>
+                            <div class="meta-block" id="optionalUserBlock" style="display:none;">
+                                <span class="meta-label">CONSUMER PROFILE</span>
+                                <span class="meta-val" id="resConsumer">—</span>
+                            </div>
+                        </div>
+
+                        <div class="receipt-metrics-row">
+                            <div class="metric-box">
+                                <span class="metric-icon">⚡</span>
+                                <div>
+                                    <span class="metric-label">ELECTRICITY USAGE</span>
+                                    <span class="metric-val-large" id="resUsage">0 kWh</span>
+                                </div>
+                            </div>
+                            <div class="metric-box">
+                                <span class="metric-icon">🌍</span>
+                                <div>
+                                    <span class="metric-label">ESTIMATED IMPACT</span>
+                                    <span class="metric-val-large" id="resCo2Kg">0 kg CO₂e</span>
+                                    <span class="metric-val-sub" id="resCo2Tonnes">(0 t CO₂e)</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Emissions Factor & Registry Notes -->
+                        <div class="receipt-factors-box">
+                            <div class="factor-row">
+                                <span>Demo emissions factor:</span>
+                                <strong>0.7 kg CO₂e/kWh</strong>
+                            </div>
+                            <div class="factor-row">
+                                <span>Demo registry reference:</span>
+                                <strong id="resRegistryRef">DEMO-REGISTRY-001</strong>
+                            </div>
+                            <div class="factor-row">
+                                <span>Timestamp:</span>
+                                <span id="resTimestamp">—</span>
+                            </div>
+                        </div>
+
+                        <!-- QR Code & Status Section -->
+                        <div class="receipt-qr-flex">
+                            <div class="qr-status-col">
+                                <div class="status-pill">
+                                    <span class="dot"></span> <span id="resStatusText">Verified for demo</span>
+                                </div>
+                                <p class="disclaimer-text">This prototype records a digital receipt. It does not independently retire a real carbon credit.</p>
+                                <p class="prototype-note">This is a prototype estimate.</p>
+                            </div>
+                            <div class="qr-code-col">
+                                <div id="qrcode" class="qr-box"></div>
+                                <span class="scan-label">SCAN TO VERIFY</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Receipt Action Buttons -->
+                    <div class="receipt-actions-row">
+                        <button type="button" class="secondary-action-btn" id="copyJsonBtn">📋 Copy Receipt Data</button>
+                        <button type="button" class="primary-action-btn" id="resetFormBtn">↺ Create Another Receipt</button>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- RIGHT CARD: What happens next & Static Example Preview -->
+            <div class="right-sidebar-stack">
+                
+                <!-- What happens next card -->
+                <div class="card info-card">
+                    <h3>What happens next?</h3>
+                    
+                    <div class="info-step-row">
+                        <div class="info-icon-box blue-icon">🛡️</div>
+                        <div>
+                            <h4>Verify the source</h4>
+                            <p>We securely verify that your data comes from a trusted source (e.g. your utility portal).</p>
+                        </div>
+                    </div>
+
+                    <div class="info-step-row">
+                        <div class="info-icon-box orange-icon">📊</div>
+                        <div>
+                            <h4>Calculate CO₂e</h4>
+                            <p>We apply a documented emissions factor to convert your usage (kWh) into estimated $\text{CO}_2\text{e}$.</p>
+                        </div>
+                    </div>
+
+                    <div class="info-step-row">
+                        <div class="info-icon-box green-icon">🌿</div>
+                        <div>
+                            <h4>Link a registry record</h4>
+                            <p>Your receipt references a public carbon-credit registry (e.g. Verra or Gold Standard).</p>
+                        </div>
+                    </div>
+
+                    <div class="info-step-row">
+                        <div class="info-icon-box brown-icon">📦</div>
+                        <div>
+                            <h4>Get your receipt</h4>
+                            <p>We record the receipt on a public blockchain (testnet) and generate a shareable, QR-coded receipt.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Example Receipt Preview Card -->
+                <div class="card preview-card">
+                    <h4>Example receipt preview</h4>
+                    <div class="mini-receipt-mock">
+                        <div class="mini-header">
+                            <span class="mini-leaf">🌿</span>
+                            <div>
+                                <div class="mini-title">RECLAIM PROTOCOL</div>
+                                <div class="mini-sub">CARBON RECEIPT</div>
+                            </div>
+                        </div>
+                        <div class="mini-content-row">
+                            <div class="mini-data">
+                                <span class="mini-label">ELECTRICITY USAGE</span>
+                                <div class="mini-val">250 kWh</div>
+                                <span class="mini-label" style="margin-top:8px;">ESTIMATED IMPACT</span>
+                                <div class="mini-val">175 kg CO₂e</div>
+                            </div>
+                            <div class="mini-qr-mock">
+                                <div class="mock-qr-grid">
+                                    <span></span><span></span><span></span><span></span>
+                                    <span></span><span></span><span></span><span></span>
+                                    <span></span><span></span><span></span><span></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mini-footer-status">
+                            <span class="mini-check">✔</span> Verified
+                        </div>
+                        <div class="mini-scan-text">SCAN TO VERIFY</div>
+                    </div>
+                </div>
+
+            </div>
+
+        </main>
+
+        <!-- Footer -->
+        <footer class="site-footer">
+            <div class="footer-logo-area">
+                <span class="logo-icon">🌿</span>
+                <div class="logo-text-group">
+                    <span class="logo-title">RECLAIM PROTOCOL</span>
+                    <span class="logo-subtitle">USAGE TODAY. A CLEANER TOMORROW.</span>
+                </div>
+            </div>
+            <div class="footer-links">
+                <span class="inactive">How it works</span>
+                <span class="inactive">Why us</span>
+                <span class="inactive">Verify Receipt</span>
+            </div>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Receipt - Reclaim Protocol</title>
+    <!-- Google Fonts: Playfair Display for serif headings, Inter for body text -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <!-- jsQR Library for QR decoding -->
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+    <link rel="stylesheet" href="verify-receipt.css">
+</head>
+<body>
+
+    <div class="page-wrapper">
+        <!-- Header -->
+        <header class="site-header">
+            <a href="reclaim-protocol.html" class="logo-area" style="text-decoration: none; color: inherit;">
+                <span class="logo-icon">🌿</span>
+                <div class="logo-text-group">
+                    <span class="logo-title">RECLAIM PROTOCOL</span>
+                    <span class="logo-subtitle">USAGE TODAY. A CLEANER TOMORROW.</span>
+                </div>
+            </a>
+            <nav class="header-nav">
+                <span class="nav-link inactive">How it works</span>
+                <span class="nav-link inactive">Why us</span>
+                <a href="verify-receipt.html" class="nav-link active">Verify Receipt</a>
+                <a href="index.html" class="nav-btn-active">Create Receipt &rarr;</a>
+            </nav>
+        </header>
+
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <div class="hero-title-row">
+                <h1 class="hero-title">Same data. <span class="italic-green">A brighter tomorrow.</span></h1>
+                <div class="hero-badge-side">
+                    <span class="side-tag">TRUST TODAY.</span>
+                    <span class="side-sub">A CLEANER TOMORROW.</span>
+                </div>
+            </div>
+            <p class="hero-subtitle">Check the authenticity of a carbon receipt and explore its details.</p>
+        </section>
+
+        <!-- Main Content Layout -->
+        <main class="main-layout">
+            
+            <!-- LEFT CARD: Verification Form & Results -->
+            <div class="card verification-card">
+                
+                <!-- Verification Method Tabs -->
+                <div class="verification-tabs">
+                    <button type="button" class="tab-btn active" id="tabScanQR">
+                        <span class="tab-icon">🔲</span> Scan QR Code
+                    </button>
+                    <button type="button" class="tab-btn" id="tabEnterId">
+                        <span class="tab-icon">📝</span> Enter Receipt ID
+                    </button>
+                </div>
+
+                <!-- SECTION A: QR Code Mode -->
+                <div id="qrSection" class="verification-mode-content">
+                    <div class="scanner-frame-box" id="dropZone">
+                        <div class="corner-tl"></div>
+                        <div class="corner-tr"></div>
+                        <div class="corner-bl"></div>
+                        <div class="corner-br"></div>
+                        
+                        <div class="scanner-interior">
+                            <span class="qr-grid-icon">🔲</span>
+                            <p class="scanner-main-text">Click to upload an image or use your camera to scan a QR code</p>
+                            <button type="button" class="action-sub-btn" id="startCameraBtn">
+                                📷 Scan with Camera
+                            </button>
+                        </div>
+
+                        <!-- Hidden live video element for camera capture -->
+                        <video id="cameraVideo" class="camera-video hidden" autoplay playsinline></video>
+                        <button type="button" id="stopCameraBtn" class="stop-camera-btn hidden">Stop Camera</button>
+                    </div>
+
+                    <div class="divider-or">
+                        <span>or</span>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="qrFileInput">Upload QR Code Image</label>
+                        <div class="file-upload-wrapper">
+                            <span class="file-icon">🖼️</span>
+                            <span id="fileNameDisplay" class="file-name-display">Choose an image file</span>
+                            <input type="file" id="qrFileInput" accept="image/png, image/jpeg, image/webp" class="file-input-hidden">
+                            <button type="button" class="browse-btn-trigger">Browse</button>
+                        </div>
+                        <span class="helper-text">Supports JPG, PNG, WEBP</span>
+                    </div>
+                </div>
+
+                <!-- SECTION B: Receipt ID Mode (Hidden by default) -->
+                <div id="idSection" class="verification-mode-content hidden">
+                    <div class="input-group" style="margin-top: 10px;">
+                        <label for="receiptIdInput">Enter receipt ID</label>
+                        <input type="text" id="receiptIdInput" placeholder="RCP-2026-123456" autocomplete="off">
+                        <span class="helper-text">Try demo IDs: RCP-2026-123456, RCP-2026-482917, RCP-2026-000001</span>
+                    </div>
+                </div>
+
+                <!-- Global Error Message Container -->
+                <div id="verificationError" class="error-banner hidden"></div>
+
+                <!-- Verify Button -->
+                <button type="button" class="submit-verify-btn" id="verifyActionBtn">
+                    Verify Receipt &rarr;
+                </button>
+
+                <!-- Processing / Loading State (Hidden by default) -->
+                <div id="loadingContainer" class="loading-container hidden">
+                    <div class="spinner"></div>
+                    <h3 class="loading-title" id="loadingText">Reading receipt data…</h3>
+                    <p class="loading-sub">Simulating protocol decryption pipeline...</p>
+                </div>
+
+                <!-- Verified Receipt Result Container (Hidden by default) -->
+                <div id="verifiedResultContainer" class="receipt-result-container hidden">
+                    
+                    <div class="success-verification-banner">
+                        <span class="success-icon">✔</span>
+                        <div>
+                            <strong>Receipt successfully verified</strong>
+                            <p>Receipt data was successfully read and matched with the prototype records.</p>
+                        </div>
+                    </div>
+
+                    <!-- Digital Receipt Card -->
+                    <div class="digital-receipt-box">
+                        <div class="receipt-top-brand">
+                            <div class="receipt-brand-left">
+                                <span class="receipt-leaf">🌿</span>
+                                <div>
+                                    <div class="receipt-brand-name">RECLAIM PROTOCOL</div>
+                                    <div class="receipt-brand-sub">CARBON RECEIPT</div>
+                                </div>
+                            </div>
+                            <div class="status-pill-green">
+                                <span class="dot"></span> Verified for demo
+                            </div>
+                        </div>
+
+                        <div class="receipt-meta-grid">
+                            <div class="meta-block">
+                                <span class="meta-label">ELECTRICITY PROVIDER</span>
+                                <span class="meta-val" id="resProvider">—</span>
+                            </div>
+                            <div class="meta-block">
+                                <span class="meta-label">RECEIPT ID</span>
+                                <span class="meta-val monospace" id="resReceiptId">—</span>
+                            </div>
+                            <div class="meta-block">
+                                <span class="meta-label">BILLING PERIOD</span>
+                                <span class="meta-val" id="resBillingPeriod">—</span>
+                            </div>
+                            <div class="meta-block">
+                                <span class="meta-label">ISSUED ON</span>
+                                <span class="meta-val" id="resTimestamp">—</span>
+                            </div>
+                        </div>
+
+                        <div class="receipt-metrics-row">
+                            <div class="metric-box">
+                                <span class="metric-icon">⚡</span>
+                                <div>
+                                    <span class="metric-label">ELECTRICITY USAGE</span>
+                                    <span class="metric-val-large" id="resUsage">0 kWh</span>
+                                </div>
+                            </div>
+                            <div class="metric-box">
+                                <span class="metric-icon">🌍</span>
+                                <div>
+                                    <span class="metric-label">ESTIMATED IMPACT</span>
+                                    <span class="metric-val-large" id="resCo2Kg">0 kg CO₂e</span>
+                                    <span class="metric-val-sub" id="resCo2Tonnes">(0 t CO₂e)</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="receipt-factors-box">
+                            <div class="factor-row">
+                                <span>Emissions factor:</span>
+                                <strong id="resEmissionFactor">0.7 kg CO₂e/kWh</strong>
+                            </div>
+                            <div class="factor-row">
+                                <span>Registry Reference (Demo):</span>
+                                <strong id="resRegistryRef">DEMO-REGISTRY-001</strong>
+                            </div>
+                            <div class="factor-row">
+                                <span>Blockchain Status:</span>
+                                <strong id="resBlockchainStatus">Prototype testnet record</strong>
+                            </div>
+                        </div>
+
+                        <div class="disclaimer-box-bottom">
+                            <p><strong>Disclaimer:</strong> This is a prototype verification result. It does not independently verify a real utility account, retire a real carbon credit or confirm a real blockchain transaction.</p>
+                        </div>
+                    </div>
+
+                    <!-- Result Action Buttons -->
+                    <div class="receipt-actions-row">
+                        <button type="button" class="secondary-action-btn" id="copyJsonBtn">📋 Copy Receipt Data</button>
+                        <button type="button" class="primary-action-btn" id="verifyAnotherBtn">↺ Verify Another Receipt</button>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- RIGHT SIDEBAR: What you'll see & Example verified receipt -->
+            <div class="right-sidebar-stack">
+                
+                <!-- What you'll see info card -->
+                <div class="card info-card">
+                    <h3>What you’ll see</h3>
+                    
+                    <div class="info-step-row">
+                        <div class="info-icon-box blue-icon">🛡️</div>
+                        <div>
+                            <h4>Receipt details</h4>
+                            <p>View the original usage data, $\text{CO}_2$ calculations and issuance timestamp.</p>
+                        </div>
+                    </div>
+
+                    <div class="info-step-row">
+                        <div class="info-icon-box green-icon">🌿</div>
+                        <div>
+                            <h4>Verification status</h4>
+                            <p>Check if the receipt is valid and untampered.</p>
+                        </div>
+                    </div>
+
+                    <div class="info-step-row">
+                        <div class="info-icon-box brown-icon">📦</div>
+                        <div>
+                            <h4>Source information</h4>
+                            <p>See the referenced registry record (demo for now).</p>
+                        </div>
+                    </div>
+
+                    <div class="info-step-row">
+                        <div class="info-icon-box orange-icon">📊</div>
+                        <div>
+                            <h4>Transparent impact</h4>
+                            <p>Understand the estimated carbon impact and methodology.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Example Verified Receipt Card -->
+                <div class="card preview-card">
+                    <h4>Example verified receipt</h4>
+                    <div class="mini-verified-receipt">
+                        <div class="mini-header-row">
+                            <div class="mini-brand-group">
+                                <span class="mini-leaf">🌿</span>
+                                <div>
+                                    <div class="mini-title">RECLAIM PROTOCOL</div>
+                                    <div class="mini-sub">CARBON RECEIPT</div>
+                                </div>
+                            </div>
+                            <div class="mini-status-badge">
+                                <span class="check-circle">✔</span> Verified for demo
+                            </div>
+                        </div>
+
+                        <div class="mini-grid-content">
+                            <div class="mini-data-col">
+                                <div class="mini-block-item">
+                                    <span class="mini-lbl">ELECTRICITY USAGE</span>
+                                    <span class="mini-val-num">250 kWh</span>
+                                </div>
+                                <div class="mini-block-item">
+                                    <span class="mini-lbl">ESTIMATED IMPACT</span>
+                                    <span class="mini-val-num">175 kg CO₂e</span>
+                                    <span class="mini-val-sub">0.175 t CO₂e</span>
+                                </div>
+                                <div class="mini-block-item">
+                                    <span class="mini-lbl">ISSUED ON</span>
+                                    <span class="mini-val-text">16 Sep 2026, 14:32</span>
+                                </div>
+                                <div class="mini-block-item">
+                                    <span class="mini-lbl">RECEIPT ID</span>
+                                    <span class="mini-val-code">RCP-2026-482917</span>
+                                </div>
+                            </div>
+                            <div class="mini-qr-visual-col">
+                                <div class="mock-qr-square">
+                                    <span></span><span></span><span></span><span></span>
+                                    <span></span><span></span><span></span><span></span>
+                                    <span></span><span></span><span></span><span></span>
+                                </div>
+                                <span class="mini-scan-lbl">Scan to view details</span>
+                            </div>
+                        </div>
+
+                        <div class="mini-footer-registry">
+                            <span>Registry Reference (Demo): <strong>DEMO-REGISTRY-001</strong></span>
+                            <span class="mini-disclaimer-note">This is a prototype receipt. It does not retire real carbon credits.</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </main>
+
+        <!-- Footer -->
+        <footer class="site-footer">
+            <a href="reclaim-protocol.html" class="footer-logo-area" style="text-decoration:none; color:inherit;">
+                <span class="logo-icon">🌿</span>
+                <div class="logo-text-group">
+                    <span class="logo-title">RECLAIM PROTOCOL</span>
+                    <span class="logo-subtitle">USAGE TODAY. A CLEANER TOMORROW.</span>
+                </div>
+            </a>
+            <div class="footer-links">
+                <span class="inactive">How it works</span>
+                <span class="inactive">Why us</span>
+                <a href="verify-receipt.html" class="active-link-footer">Verify Receipt</a>
+            </div>
+            <div class="footer-socials">
+                <span>in</span>
+                <span>📷</span>
+                <span>𝕏</span>
+                <span class="footer-sub-text">A CLEANER TOMORROW.</span>
+            </div>
+        </footer>
+    </div>
+
+    <script src="verify-receipt.js"></script>
+</body>
+</html>
