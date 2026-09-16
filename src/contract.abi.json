@@ -1,0 +1,13 @@
+[
+  {
+    "type": "function",
+    "name": "burnReceipt",
+    "stateMutability": "nonpayable",
+    "inputs": [
+      { "name": "tonnage", "type": "uint256" },
+      { "name": "proofHash", "type": "bytes32" },
+      { "name": "verraSerial", "type": "string" }
+    ],
+    "outputs": []
+  }
+]
